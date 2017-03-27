@@ -18,7 +18,7 @@ let imagePicker = UIImagePickerController()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        imagePicker.delegate = self
 }
     
     func presentImagePickerWith(sourceType: UIImagePickerControllerSourceType) {
@@ -32,6 +32,9 @@ let imagePicker = UIImagePickerController()
     }
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
+        let image: UIImage = info["UIImagePickerControllerOriginalImage"] as! UIImage
+        ImageView.image = image
+        imagePicker.dismiss(animated: true, completion: nil)// this is the flow previous select
         print("Info\(info)")
     }
     
@@ -61,7 +64,6 @@ let imagePicker = UIImagePickerController()
         self.present(actionSheetController, animated: true, completion: nil)
         
     }
-    
 }
 
 
