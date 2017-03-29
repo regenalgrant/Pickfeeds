@@ -69,6 +69,7 @@ let imagePicker = UIImagePickerController()
         guard let image = self.ImageView.image else { return }
         
         let alertController = UIAlertController(title: "Filter", message: "Please select a filter", preferredStyle:.alert)
+        
         let blackAndWhiteAction = UIAlertAction(title: "Black and White", style: .default) { (action ) in
             Filters.filter(name: .blackAndWhite, image: image, completion: {(filteredImage) in
                 self.ImageView.image = filteredImage
@@ -79,14 +80,36 @@ let imagePicker = UIImagePickerController()
                 self.ImageView.image = filteredImage
             })
         }
+        
+        let sepiaAction = UIAlertAction(title: "Sepia", style: .default) { (action) in
+            Filters.filter(name: .sepia, image: image, completion: {(filteredImage) in
+                self.ImageView.image = filteredImage
+            })
+        }
+        
+        let colorInvertAction = UIAlertAction(title: "Invert", style: .default) { (action) in
+            Filters.filter(name: .colorInvert, image: image, completion: {(filteredImage) in
+                self.ImageView.image = filteredImage
+            })
+        }
+        
+        let colorPosterizeAction = UIAlertAction(title: "Polarize", style: .default) { (action) in
+            Filters.filter(name: .colorPosterize, image: image, completion: {(filteredImage) in
+                self.ImageView.image = filteredImage
+            })
+        }
         let resetAction = UIAlertAction(title: "Reset Image", style: .destructive) {(action) in
                 self.ImageView.image = Filters.originalImage
         }
+        
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
         
     
         alertController.addAction(blackAndWhiteAction)
         alertController.addAction(vintageAction)
+        alertController.addAction(sepiaAction)
+        alertController.addAction(colorInvertAction)
+        alertController.addAction(colorPosterizeAction)
         alertController.addAction(resetAction)
         alertController.addAction(cancelAction)
     
