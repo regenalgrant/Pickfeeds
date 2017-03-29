@@ -50,7 +50,7 @@ let imagePicker = UIImagePickerController()
     
     @IBAction func imageTapped(_ sender: Any) {
         print("User tapped Image!")
-        presentActionSheet()//basically an event  listner
+        presentActionSheet()//basically an event  listener
     }
     @IBAction func postButtonPress(_ sender: Any) {
         if let image = self.ImageView.image {
@@ -58,9 +58,9 @@ let imagePicker = UIImagePickerController()
             CloudKit.shared.save(post: newPost, completion: { ( success) in
                 
                 if success {
-                    print ("Saved Post Succesfully to CloudKit")
+                    print ("Saved Post Succesfully to CloudKit!")
                 } else {
-                    print ("we did NOT successfuly save to CloudKit")
+                    print ("We did NOT successfuly save to CloudKit!")
             }
         })
     }
@@ -119,7 +119,7 @@ let imagePicker = UIImagePickerController()
             
     func presentActionSheet() {
         
-        let actionSheetController = UIAlertController(title: "Source", message: "Please Select Source Type", preferredStyle: .actionSheet)
+        let actionSheetController = UIAlertController(title: "Source", message: "Please Select Source Type!", preferredStyle: .actionSheet)
         
         let cameraAction = UIAlertAction(title: "Camera", style: .default) { (action) in
             self.presentImagePickerWith(sourceType: .camera)
