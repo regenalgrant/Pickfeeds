@@ -33,7 +33,7 @@ class Filters {
 
                 
             //Get final image using GPU
-                guard let outputImage = filter.outputImage else {fatalError("Failed to get output image from Filter.")}
+                guard let outputImage = filter.outputImage else {fatalError("Failed to get output image from Filter!")}
                 
                 if let cgImage = context.createCGImage(outputImage, from: outputImage.extent){
                     
