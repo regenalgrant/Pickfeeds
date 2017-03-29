@@ -9,15 +9,14 @@
 import UIKit
 
 class HomeViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
-
-
-
-let imagePicker = UIImagePickerController()
+    
+    
+    
+    let imagePicker = UIImagePickerController()
     
     @IBOutlet weak var filterButtonTopContraint: NSLayoutConstraint!
-    
-    @IBOutlet weak var ImageView: UIImageView!
-    
+    @IBOutlet weak var imageView: UIImageView!
+    @IBOutlet weak var postButtonRightConstraint: NSLayoutConstraint!
     
     override func viewDidLoad() {// override superclass
         super.viewDidLoad()
@@ -29,6 +28,19 @@ let imagePicker = UIImagePickerController()
             self.view.layoutIfNeeded()
         }
     }
+    
+    //    override func viewDidAppear(_ animated: Bool) {
+    //        super.viewDidAppear(animated)
+    //        imagePicker.delegate = self
+    //
+    //        filterButtonTopContraint.constant = 7.5
+    //        postButtonRightConstraint.constant = 0
+    //
+    //        UIView.animate(withDuration: 0.4) {
+    //         self.view.layoutIfNeeded()
+    //
+    //        }
+    //    }
     
     func presentImagePickerWith(sourceType: UIImagePickerControllerSourceType) {
         self.imagePicker.delegate = self
@@ -42,9 +54,17 @@ let imagePicker = UIImagePickerController()
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
         let image: UIImage = info["UIImagePickerControllerOriginalImage"] as! UIImage
-        ImageView.image = image
+        //        imageView.image = image
         Filters.originalImage = image
-        imagePicker.dismiss(animated: true, completion: nil)// this is the flow previous select
+        
+        // this is the flow previous select
+        imagePicker.dismiss(animated: true) {
+            UIView.transition(with: self.imageView,
+                              duration: 1,
+                              options: .transitionCurlDown, animations: {
+                                self.imageView.image = image
+            }, completion: nil)
+        }
         
         print("Info\(info)")
     }
@@ -52,9 +72,10 @@ let imagePicker = UIImagePickerController()
     @IBAction func imageTapped(_ sender: Any) {
         print("User tapped Image!")
         presentActionSheet()//basically an event  listener
+        
     }
     @IBAction func postButtonPress(_ sender: Any) {
-        if let image = self.ImageView.image {
+        if let image = self.imageView.image {
             let newPost = Post(image: image)
             CloudKit.shared.save(post: newPost, completion: { ( success) in
                 
@@ -62,50 +83,50 @@ let imagePicker = UIImagePickerController()
                     print ("Saved Post Succesfully to CloudKit!")
                 } else {
                     print ("We did NOT successfuly save to CloudKit!")
-            }
-        })
+                }
+            })
+        }
     }
-}
     @IBAction func filterButtonPress(_ sender: Any) {
-        guard let image = self.ImageView.image else { return }
+        guard let image = self.imageView.image else { return }
         
         let alertController = UIAlertController(title: "Filter", message: "Please select a filter", preferredStyle:.alert)
         
         let blackAndWhiteAction = UIAlertAction(title: "Black and White", style: .default) { (action ) in
             Filters.filter(name: .blackAndWhite, image: image, completion: {(filteredImage) in
-                self.ImageView.image = filteredImage
+                self.imageView.image = filteredImage
             })
         }
         let vintageAction = UIAlertAction(title: "Vintage", style: .default) { (action) in
             Filters.filter(name: .vintage, image: image, completion: {(filteredImage) in
-                self.ImageView.image = filteredImage
+                self.imageView.image = filteredImage
             })
         }
         
         let sepiaAction = UIAlertAction(title: "Sepia", style: .default) { (action) in
             Filters.filter(name: .sepia, image: image, completion: {(filteredImage) in
-                self.ImageView.image = filteredImage
+                self.imageView.image = filteredImage
             })
         }
         
         let colorInvertAction = UIAlertAction(title: "Invert", style: .default) { (action) in
             Filters.filter(name: .colorInvert, image: image, completion: {(filteredImage) in
-                self.ImageView.image = filteredImage
+                self.imageView.image = filteredImage
             })
         }
         
         let colorPosterizeAction = UIAlertAction(title: "Polarize", style: .default) { (action) in
             Filters.filter(name: .colorPosterize, image: image, completion: {(filteredImage) in
-                self.ImageView.image = filteredImage
+                self.imageView.image = filteredImage
             })
         }
         let resetAction = UIAlertAction(title: "Reset Image", style: .destructive) {(action) in
-                self.ImageView.image = Filters.originalImage
+            self.imageView.image = Filters.originalImage
         }
         
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
         
-    
+        
         alertController.addAction(blackAndWhiteAction)
         alertController.addAction(vintageAction)
         alertController.addAction(sepiaAction)
@@ -113,11 +134,11 @@ let imagePicker = UIImagePickerController()
         alertController.addAction(colorPosterizeAction)
         alertController.addAction(resetAction)
         alertController.addAction(cancelAction)
-    
+        
         self.present(alertController, animated: true, completion: nil)
-    
+        
     }
-            
+    
     func presentActionSheet() {
         
         let actionSheetController = UIAlertController(title: "Source", message: "Please Select Source Type!", preferredStyle: .actionSheet)
