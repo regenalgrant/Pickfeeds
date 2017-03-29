@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11762" systemVersion="16E195" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="130-Y8-Zfb">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11757"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
+        <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Item-->
+        <scene sceneID="tne-QT-ifu">
+            <objects>
+                <viewController id="BYZ-38-t0r" customClass="HomeViewController" customModule="Pickfeed" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="y3c-jy-aDJ"/>
+                        <viewControllerLayoutGuide type="bottom" id="wfy-db-euE"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="LWG-gN-jZG">
+                                <rect key="frame" x="34" y="83" width="306" height="500"/>
+                                <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                                <gestureRecognizers/>
+                                <connections>
+                                    <outletCollection property="gestureRecognizers" destination="F89-4d-8vk" appends="YES" id="2oh-tq-Ic9"/>
+                                </connections>
+                            </imageView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="O8d-tI-HNJ">
+                                <rect key="frame" x="34" y="45" width="306" height="30"/>
+                                <color key="backgroundColor" red="0.80000000000000004" green="1" blue="0.80000000000000004" alpha="1" colorSpace="calibratedRGB"/>
+                                <state key="normal" title="POST">
+                                    <color key="titleColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="postButtonPress:" destination="BYZ-38-t0r" eventType="touchUpInside" id="zOe-z3-8tp"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="H3V-oP-9KX">
+                                <rect key="frame" x="34" y="783" width="306" height="30"/>
+                                <color key="backgroundColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <state key="normal" title="FILTER">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="filterButtonPress:" destination="BYZ-38-t0r" eventType="touchUpInside" id="itH-dJ-GDM"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="LWG-gN-jZG" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="1rg-ew-yvX"/>
+                            <constraint firstItem="LWG-gN-jZG" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" multiplier="0.75" constant="68" id="5ZA-ch-ByN"/>
+                            <constraint firstItem="LWG-gN-jZG" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" multiplier="0.75" constant="22" id="85j-dm-EMX"/>
+                            <constraint firstItem="O8d-tI-HNJ" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="9GW-1l-lyB"/>
+                            <constraint firstItem="H3V-oP-9KX" firstAttribute="width" secondItem="LWG-gN-jZG" secondAttribute="width" id="9rA-Lt-ujc"/>
+                            <constraint firstItem="H3V-oP-9KX" firstAttribute="top" secondItem="LWG-gN-jZG" secondAttribute="bottom" constant="200" id="Kgu-kR-bUa"/>
+                            <constraint firstItem="LWG-gN-jZG" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="mXb-Rg-1C2"/>
+                            <constraint firstItem="H3V-oP-9KX" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="ohb-MI-2e1"/>
+                            <constraint firstItem="LWG-gN-jZG" firstAttribute="top" secondItem="O8d-tI-HNJ" secondAttribute="bottom" constant="8" id="s5J-Xb-erO"/>
+                            <constraint firstItem="O8d-tI-HNJ" firstAttribute="width" secondItem="LWG-gN-jZG" secondAttribute="width" id="uyw-YZ-Wl9"/>
+                        </constraints>
+                    </view>
+                    <tabBarItem key="tabBarItem" title="Item" id="NJG-gr-Rwv"/>
+                    <connections>
+                        <outlet property="ImageView" destination="LWG-gN-jZG" id="lzD-G5-B3o"/>
+                        <outlet property="filterButtonTopContraint" destination="Kgu-kR-bUa" id="Wu0-GO-pid"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
+                <tapGestureRecognizer id="F89-4d-8vk">
+                    <connections>
+                        <action selector="imageTapped:" destination="BYZ-38-t0r" id="u6U-Iq-1rc"/>
+                    </connections>
+                </tapGestureRecognizer>
+            </objects>
+            <point key="canvasLocation" x="1000.8" y="43.628185907046479"/>
+        </scene>
+        <!--Tab Bar Controller-->
+        <scene sceneID="DP6-2d-Ohq">
+            <objects>
+                <tabBarController automaticallyAdjustsScrollViewInsets="NO" id="130-Y8-Zfb" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <tabBar key="tabBar" contentMode="scaleToFill" id="m8f-AI-Vt1">
+                        <autoresizingMask key="autoresizingMask"/>
+                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                    </tabBar>
+                    <connections>
+                        <segue destination="BYZ-38-t0r" kind="relationship" relationship="viewControllers" id="Nh1-cf-Sce"/>
+                    </connections>
+                </tabBarController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="efy-Tf-K5y" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="61.600000000000001" y="43.628185907046479"/>
+        </scene>
+    </scenes>
+</document>
