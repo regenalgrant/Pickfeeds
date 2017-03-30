@@ -11,11 +11,14 @@ import CloudKit
 
 class Post {
     let image: UIImage
+    let postDate: Date
     
-    init(image: UIImage){// initialization
+    init(image: UIImage, date: Date){// initialization
         self.image = image//assign init here
+        self.postDate = date 
     }
 }
+
 enum PostError : Error{
     case writingImageToData
     case writingDataToDisk
@@ -32,7 +35,7 @@ extension Post {
             let asset = CKAsset(fileURL: post.image.path)
             let record  = CKRecord(recordType: "Post")
             record.setValue(asset, forKey: "image")
-            
+            record.setValue(Date(), forKey: "post_date")
             return record
             
             

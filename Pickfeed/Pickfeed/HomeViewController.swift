@@ -29,18 +29,6 @@ class HomeViewController: UIViewController, UIImagePickerControllerDelegate, UIN
         }
     }
     
-    //    override func viewDidAppear(_ animated: Bool) {
-    //        super.viewDidAppear(animated)
-    //        imagePicker.delegate = self
-    //
-    //        filterButtonTopContraint.constant = 7.5
-    //        postButtonRightConstraint.constant = 0
-    //
-    //        UIView.animate(withDuration: 0.4) {
-    //         self.view.layoutIfNeeded()
-    //
-    //        }
-    //    }
     
     func presentImagePickerWith(sourceType: UIImagePickerControllerSourceType) {
         self.imagePicker.delegate = self
@@ -76,7 +64,7 @@ class HomeViewController: UIViewController, UIImagePickerControllerDelegate, UIN
     }
     @IBAction func postButtonPress(_ sender: Any) {
         if let image = self.imageView.image {
-            let newPost = Post(image: image)
+            let newPost = Post(image: image, date: Date())
             CloudKit.shared.save(post: newPost, completion: { ( success) in
                 
                 if success {

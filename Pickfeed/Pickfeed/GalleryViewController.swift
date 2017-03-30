@@ -14,12 +14,18 @@ class GalleryViewController: UIViewController {
     
     var allPosts = [Post]() {
         didSet {
+            allPosts = allPosts.sorted(by: sorterArray)
             self.collectionView.reloadData()
         }
     }
     
+    private func sorterArray(this: Post, that: Post) -> Bool {
+        return this.postDate > that.postDate
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         self.collectionView.dataSource = self
         self.collectionView.collectionViewLayout = GalleryCollectionViewLayout(columns: 1)
     }

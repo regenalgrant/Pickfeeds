@@ -52,10 +52,10 @@ class CloudKit {
             if let records = records {
                 var posts = [Post]()
                 for record in records {
-                    if let asset = record["image"] as? CKAsset{
+                    if let asset = record["image"] as? CKAsset {
                         let path = asset.fileURL.path
                         if let image = UIImage(contentsOfFile: path) {
-                            let newPost = Post(image: image)
+                            let newPost = Post(image: image, date: record.creationDate!)
                             posts.append(newPost)
                         }
                     }
