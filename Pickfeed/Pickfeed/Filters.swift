@@ -15,14 +15,14 @@ import UIKit
 
 class Filter {
     static let shared = Filter()
-    var context = CIContext()
+    var ciContext = CIContext()
     
     
     private init() {
             //GPU CONTEXT
         let options = [kCIContextWorkingColorSpace: NSNull()]
         let eaglContext = EAGLContext(api: .openGLES2)
-        self.context = CIContext(eaglContext: (eaglContext)!, options: options)
+        self.ciContext = CIContext(eaglContext: (eaglContext)!, options: options)
     }
     
 }
@@ -46,14 +46,10 @@ class Filters {
             let coreImage = CIImage(image: image)
             filter.setValue(coreImage, forKey:kCIInputImageKey)
             
-            //GPU CONTEXT
-
-
-                
             //Get final image using GPU
                 guard let outputImage = filter.outputImage else {fatalError("Failed to get output image from Filter!")}
                 
-                if let cgImage = Filter.shared.context.createCGImage(outputImage, from: outputImage.extent){
+                if let cgImage = Filter.shared.ciContext.createCGImage(outputImage, from: outputImage.extent){
                     
                     let finalImage = UIImage (cgImage: cgImage)
                     OperationQueue.main.addOperation {
