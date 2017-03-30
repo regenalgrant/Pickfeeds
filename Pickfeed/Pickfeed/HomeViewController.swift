@@ -7,25 +7,48 @@
 //
 
 import UIKit
+import Social
 
 class HomeViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
-    
+    let filterNames = [FilterName.vintage, FilterName.blackAndWhite, FilterName.sepia,FilterName.colorInvert ]
     
     let imagePicker = UIImagePickerController()
     
+    @IBOutlet weak var collectionView: UICollectionView!
+    
+    @IBOutlet weak var CollectionViewHieghtConstraint: NSLayoutConstraint!
+    
     @IBOutlet weak var filterButtonTopContraint: NSLayoutConstraint!
+    
     @IBOutlet weak var imageView: UIImageView!
+    
     @IBOutlet weak var postButtonRightConstraint: NSLayoutConstraint!
+    
     
     override func viewDidLoad() {// override superclass
         super.viewDidLoad()
         imagePicker.delegate = self
+        setupGalleryDelegate()
+        
+    }
+    
+    func setupGalleryDelegate() {
+        
+        if let tabBarController = self.tabBarController {
+            
+            guard let viewControllers = tabBarController.viewControllers else { return }
+            
+            guard let galleryController = viewControllers[1] as? GalleryViewController else { return }
+            galleryController.delegate = self
+        }
         
         filterButtonTopContraint.constant = 8
         
         UIView.animate(withDuration: 0.4) {
             self.view.layoutIfNeeded()
+            
+            self.collectionView.dataSource = self
         }
     }
     
@@ -43,7 +66,7 @@ class HomeViewController: UIViewController, UIImagePickerControllerDelegate, UIN
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
         let image: UIImage = info["UIImagePickerControllerOriginalImage"] as! UIImage
         //        imageView.image = image
-        Filters.originalImage = image
+        Filters.shared.originalImage = image
         
         // this is the flow previous select
         imagePicker.dismiss(animated: true) {
@@ -51,6 +74,7 @@ class HomeViewController: UIViewController, UIImagePickerControllerDelegate, UIN
                               duration: 1,
                               options: .transitionCurlDown, animations: {
                                 self.imageView.image = image
+                                self.collectionView.reloadData()
             }, completion: nil)
         }
         
@@ -75,90 +99,96 @@ class HomeViewController: UIViewController, UIImagePickerControllerDelegate, UIN
             })
         }
     }
-    //@IBAction func saveButton
-    //UIImageWriteToSavedOhotosAlbum(ImageView.image!, self, #selector(image(_:
-    //didFinishSavingWithError:contextInfo:)),nil)
     
     @IBAction func filterButtonPress(_ sender: Any) {
-        guard let image = self.imageView.image else { return }
+        guard self.imageView.image != nil else { return }
         
-        let alertController = UIAlertController(title: "Filter", message: "Please select a filter", preferredStyle:.alert)
+        self.CollectionViewHieghtConstraint.constant = 150
         
-        let blackAndWhiteAction = UIAlertAction(title: "Black and White", style: .default) { (action ) in
-            Filters.filter(name: .blackAndWhite, image: image, completion: {(filteredImage) in
-                self.imageView.image = filteredImage
-            })
+        UIView.animate(withDuration: 0.5) {
+            self.view.layoutIfNeeded()
         }
-        let vintageAction = UIAlertAction(title: "Vintage", style: .default) { (action) in
-            Filters.filter(name: .vintage, image: image, completion: {(filteredImage) in
-                self.imageView.image = filteredImage
-            })
-        }
-        
-        let sepiaAction = UIAlertAction(title: "Sepia", style: .default) { (action) in
-            Filters.filter(name: .sepia, image: image, completion: {(filteredImage) in
-                self.imageView.image = filteredImage
-            })
-        }
-        
-        let colorInvertAction = UIAlertAction(title: "Invert", style: .default) { (action) in
-            Filters.filter(name: .colorInvert, image: image, completion: {(filteredImage) in
-                self.imageView.image = filteredImage
-            })
-        }
-        
-        let colorPosterizeAction = UIAlertAction(title: "Polarize", style: .default) { (action) in
-            Filters.filter(name: .colorPosterize, image: image, completion: {(filteredImage) in
-                self.imageView.image = filteredImage
-            })
-        }
-        let resetAction = UIAlertAction(title: "Reset Image", style: .destructive) {(action) in
-            self.imageView.image = Filters.originalImage
-        }
-        
-        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
-        
-        
-        alertController.addAction(blackAndWhiteAction)
-        alertController.addAction(vintageAction)
-        alertController.addAction(sepiaAction)
-        alertController.addAction(colorInvertAction)
-        alertController.addAction(colorPosterizeAction)
-        alertController.addAction(resetAction)
-        alertController.addAction(cancelAction)
-        
-        self.present(alertController, animated: true, completion: nil)
         
     }
     
-    func presentActionSheet() {
         
-        let actionSheetController = UIAlertController(title: "Source", message: "Please Select Source Type!", preferredStyle: .actionSheet)
-        
-        let cameraAction = UIAlertAction(title: "Camera", style: .default) { (action) in
-            self.presentImagePickerWith(sourceType: .camera)
+    @IBAction func userLongPressed(_ sender: UILongPressGestureRecognizer) {
+    
+        if(SLComposeViewController.isAvailable(forServiceType: SLServiceTypeTwitter)){
+            guard let composeController = SLComposeViewController(forServiceType: SLServiceTypeTwitter) else {
+                return
+            }
+            composeController.add(self.imageView.image)
+            self.present(composeController, animated: true, completion: nil)
         }
+
+    }
+
+
         
-        let photoAction = UIAlertAction(title: "Photo Library", style: .default) { (action) in
-            self.presentImagePickerWith(sourceType: .photoLibrary)
+        func presentActionSheet() {
+            
+            let actionSheetController = UIAlertController(title: "Source", message: "Please Select Source Type!", preferredStyle: .actionSheet)
+            
+            let cameraAction = UIAlertAction(title: "Camera", style: .default) { (action) in
+                self.presentImagePickerWith(sourceType: .camera)
+            }
+            
+            let photoAction = UIAlertAction(title: "Photo Library", style: .default) { (action) in
+                self.presentImagePickerWith(sourceType: .photoLibrary)
+                
+            }
+            
+            let cancelAction = UIAlertAction(title: "Cancel", style: .destructive, handler: nil)
+            if !UIImagePickerController.isSourceTypeAvailable(.camera) {
+                cameraAction.isEnabled = false
+            }
+            actionSheetController.addAction(cameraAction)
+            actionSheetController.addAction(photoAction)
+            actionSheetController.addAction(cancelAction)
+            
+            self.present(actionSheetController, animated: true, completion: nil)
             
         }
-        
-        let cancelAction = UIAlertAction(title: "Cancel", style: .destructive, handler: nil)
-        if !UIImagePickerController.isSourceTypeAvailable(.camera) {
-            cameraAction.isEnabled = false
-        }
-        actionSheetController.addAction(cameraAction)
-        actionSheetController.addAction(photoAction)
-        actionSheetController.addAction(cancelAction)
-        
-        self.present(actionSheetController, animated: true, completion: nil)
-        
     }
-}
+    
+    //MARK: UIcollectionView DataSource
+    extension HomeViewController: UICollectionViewDataSource {
+        func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+            
+            let filterCell = collectionView.dequeueReusableCell(withReuseIdentifier: FilterCell.identifier, for: indexPath)as! FilterCell
+            
+            guard let originalImage = Filters.shared.originalImage else { return filterCell }
+            
+            guard let resizedImage = originalImage.resize(size: CGSize(width: 75, height: 75)) else { return filterCell }
+            
+            let filterName = self.filterNames[indexPath.row]
+            
+            Filters.shared.filter(name: filterName, image: resizedImage) { (filterdImage) in
+                filterCell.imageView.image = filterdImage
+                
+            }
+            
+            return filterCell
+            
+        }
 
-
-
+        func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+            return filterNames.count
+        }
+    }
+    
+    extension HomeViewController: GalleryViewControllerDelegate {
+        
+        func galleryController(didSelect image: UIImage){
+            
+            self.imageView.image = image
+            
+            self.tabBarController?.selectedIndex = 0
+            
+        }
+    }
+    
 
 
 

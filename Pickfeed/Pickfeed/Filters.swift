@@ -13,19 +13,19 @@
 
 import UIKit
 
-class Filter {
-    static let shared = Filter()
-    var ciContext = CIContext()
-    
-    
-    private init() {
-            //GPU CONTEXT
-        let options = [kCIContextWorkingColorSpace: NSNull()]
-        let eaglContext = EAGLContext(api: .openGLES2)
-        self.ciContext = CIContext(eaglContext: (eaglContext)!, options: options)
-    }
-    
-}
+//class Filter {
+//    static var originalImage : UIImage?
+//    var ciContext = CIContext()
+//
+//    
+//    private init() {
+//            //GPU CONTEXT
+//        let options = [kCIContextWorkingColorSpace: NSNull()]
+//        let eaglContext = EAGLContext(api: .openGLES2)
+//        self.ciContext = CIContext(eaglContext: (eaglContext)!, options: options)
+//    }
+//    
+
 
 enum FilterName : String {
     case vintage =  "CIPhotoEffectTransfer"
@@ -38,9 +38,19 @@ enum FilterName : String {
 typealias FilterCompletion = (UIImage?) -> ()
 
 class Filters {
-    static var originalImage = UIImage ()
+    var originalImage : UIImage?
+    var ciContext = CIContext()
+    static let shared = Filters()
+
+    private init() {
+            //GPU CONTEXT
+        let options = [kCIContextWorkingColorSpace: NSNull()]
+        let eaglContext = EAGLContext(api: .openGLES2)
+        self.ciContext = CIContext(eaglContext: (eaglContext)!, options: options)
+    }
     
-      class func filter(name: FilterName, image: UIImage, completion: @escaping FilterCompletion) {
+
+      func filter(name: FilterName, image: UIImage, completion: @escaping FilterCompletion) {
         OperationQueue().addOperation {
             guard let filter = CIFilter(name: name.rawValue) else { fatalError("Failed to create CIFilter") }//rawValue will point enum case CIPhotoFilter
             let coreImage = CIImage(image: image)
@@ -49,7 +59,7 @@ class Filters {
             //Get final image using GPU
                 guard let outputImage = filter.outputImage else {fatalError("Failed to get output image from Filter!")}
                 
-                if let cgImage = Filter.shared.ciContext.createCGImage(outputImage, from: outputImage.extent){
+                if let cgImage = Filters.shared.ciContext.createCGImage(outputImage, from: outputImage.extent){
                     
                     let finalImage = UIImage (cgImage: cgImage)
                     OperationQueue.main.addOperation {
