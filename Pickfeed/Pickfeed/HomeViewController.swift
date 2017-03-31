@@ -9,7 +9,7 @@
 import UIKit
 import Social
 
-class HomeViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+class HomeViewController: UIViewController {
     
     let filterNames = [FilterName.vintage, FilterName.blackAndWhite, FilterName.sepia,FilterName.colorInvert ]
     
@@ -31,54 +31,6 @@ class HomeViewController: UIViewController, UIImagePickerControllerDelegate, UIN
         imagePicker.delegate = self
         setupGalleryDelegate()
         
-    }
-    
-    func setupGalleryDelegate() {
-        
-        if let tabBarController = self.tabBarController {
-            
-            guard let viewControllers = tabBarController.viewControllers else { return }
-            
-            guard let galleryController = viewControllers[1] as? GalleryViewController else { return }
-            galleryController.delegate = self
-        }
-        
-        filterButtonTopContraint.constant = 8
-        
-        UIView.animate(withDuration: 0.4) {
-            self.view.layoutIfNeeded()
-            
-            self.collectionView.dataSource = self
-        }
-    }
-    
-    
-    func presentImagePickerWith(sourceType: UIImagePickerControllerSourceType) {
-        self.imagePicker.delegate = self
-        self.imagePicker.sourceType = sourceType
-        self.present(self.imagePicker, animated: true, completion: nil)//from imagePickerController, see docs for options
-    }
-    
-    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
-        self.dismiss(animated: true, completion: nil)//this allows functionality to dismiss the imageview
-    }
-    
-    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
-        let image: UIImage = info["UIImagePickerControllerOriginalImage"] as! UIImage
-        //        imageView.image = image
-        Filters.shared.originalImage = image
-        
-        // this is the flow previous select
-        imagePicker.dismiss(animated: true) {
-            UIView.transition(with: self.imageView,
-                              duration: 1,
-                              options: .transitionCurlDown, animations: {
-                                self.imageView.image = image
-                                self.collectionView.reloadData()
-            }, completion: nil)
-        }
-        
-        print("Info\(info)")
     }
     
     @IBAction func imageTapped(_ sender: Any) {
@@ -125,7 +77,6 @@ class HomeViewController: UIViewController, UIImagePickerControllerDelegate, UIN
     }
 
 
-        
         func presentActionSheet() {
             
             let actionSheetController = UIAlertController(title: "Source", message: "Please Select Source Type!", preferredStyle: .actionSheet)
@@ -152,32 +103,34 @@ class HomeViewController: UIViewController, UIImagePickerControllerDelegate, UIN
         }
     }
     
-    //MARK: UIcollectionView DataSource
-    extension HomeViewController: UICollectionViewDataSource {
-        func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-            
-            let filterCell = collectionView.dequeueReusableCell(withReuseIdentifier: FilterCell.identifier, for: indexPath)as! FilterCell
-            
-            guard let originalImage = Filters.shared.originalImage else { return filterCell }
-            
-            guard let resizedImage = originalImage.resize(size: CGSize(width: 75, height: 75)) else { return filterCell }
-            
-            let filterName = self.filterNames[indexPath.row]
-            
-            Filters.shared.filter(name: filterName, image: resizedImage) { (filterdImage) in
-                filterCell.imageView.image = filterdImage
-                
-            }
-            
-            return filterCell
-            
-        }
+//MARK: UICollectionView DataSource
 
-        func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-            return filterNames.count
-        }
-    }
+extension HomeViewController: UICollectionViewDataSource {
     
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        
+        let filterCell = collectionView.dequeueReusableCell(withReuseIdentifier: FilterCell.identifier, for: indexPath)as! FilterCell
+        
+        guard let originalImage = Filters.shared.originalImage else { return filterCell }
+        
+        guard let resizedImage = originalImage.resize(size: CGSize(width: 75, height: 75)) else { return filterCell }
+        
+        let filterName = self.filterNames[indexPath.row]
+        
+        Filters.shared.filter(name: filterName, image: resizedImage) { (filterdImage) in
+            filterCell.imageView.image = filterdImage
+            
+        }
+        
+        return filterCell
+        
+    }
+
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return filterNames.count
+    }
+}
+//MARK: GalleryViewControllerDelegate
     extension HomeViewController: GalleryViewControllerDelegate {
         
         func galleryController(didSelect image: UIImage){
@@ -188,9 +141,61 @@ class HomeViewController: UIViewController, UIImagePickerControllerDelegate, UIN
             
         }
     }
+
+//MARK: UIImagePickerControllerDelegate
+
+extension HomeViewController: UIImagePickerControllerDelegate {
+    func presentImagePickerWith(sourceType: UIImagePickerControllerSourceType) {
+        self.imagePicker.delegate = self
+        self.imagePicker.sourceType = sourceType
+        self.present(self.imagePicker, animated: true, completion: nil)//from imagePickerController, see docs for options
+    }
     
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        self.dismiss(animated: true, completion: nil)//this allows functionality to dismiss the imageview
+    }
+    
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
+        let image: UIImage = info["UIImagePickerControllerOriginalImage"] as! UIImage
+        //        imageView.image = image
+        Filters.shared.originalImage = image
+        
+        // this is the flow previous select
+        imagePicker.dismiss(animated: true) {
+            UIView.transition(with: self.imageView,
+                              duration: 1,
+                              options: .transitionCurlDown, animations: {
+                                self.imageView.image = image
+                                self.collectionView.reloadData()
+            }, completion: nil)
+        }
+        
+        print("Info\(info)")
+    }
 
+}
 
+//MARK: UINavigationControllerDelegate
 
+extension HomeViewController: UINavigationControllerDelegate {
+    func setupGalleryDelegate() {
+        
+        if let tabBarController = self.tabBarController {
+            
+            guard let viewControllers = tabBarController.viewControllers else { return }
+            
+            guard let galleryController = viewControllers[1] as? GalleryViewController else { return }
+            galleryController.delegate = self
+        }
+        
+        filterButtonTopContraint.constant = 8
+        
+        UIView.animate(withDuration: 0.4) {
+            self.view.layoutIfNeeded()
+            
+            self.collectionView.dataSource = self
+        }
+    }
 
+}
 
